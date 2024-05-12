@@ -5,9 +5,22 @@ from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 
-from database.models.user_token.crud import get_user_token_by_value, update_user_token_after_request
-from service.models import ChatCompletionRequestDTO, ModelDTO, ErrorMessage, EmbeddingRequestDTO
-from service.routes.user.utils import check_request_limit, check_token_limit, LimitExceededException
+from database.models.user_token.crud import (
+    get_user_token_by_value,
+    update_user_token_after_request,
+)
+from service.models import (
+    ChatCompletionRequestDTO,
+    ModelDTO,
+    ErrorMessage,
+    EmbeddingRequestDTO,
+)
+from service.routes.user.utils import (
+    check_request_limit,
+    check_token_limit,
+    LimitExceededException,
+)
+
 
 ENDPOINTS = {
     "embeddings": "/embeddings",
@@ -46,16 +59,13 @@ async def chat_completions(data: ChatCompletionRequestDTO, db: Session):
 
     headers = {
         "Content-Type": "application/json",
-        "Authorization": f"Bearer {user_token.openai_token}"
+        "Authorization": f"Bearer {user_token.openai_token}",
     }
     payload = data.dict()
     payload.pop("api_key")
 
     async with aiohttp.ClientSession() as session:
-        async with session.post(
-                BASE_URL + ENDPOINTS["chat_completions"], json=payload,
-                headers=headers
-        ) as response:
+        async with session.post(BASE_URL + ENDPOINTS["chat_completions"], json=payload, headers=headers) as response:
             if response.status == 200:
                 result = await response.json()
                 update_user_token_after_request(user_token.id, 1, result["usage"]["total_tokens"], db)
@@ -73,10 +83,7 @@ async def embeddings_process(data: EmbeddingRequestDTO, db: Session):
     if data.model not in models_available:
         raise ValueError(f"Unavailable model: {data.model}")
     msg = [
-        {
-            "role": "system",
-            "content": '\n'.join(data.input)
-        },
+        {"role": "system", "content": "\n".join(data.input)},
     ]
 
     check_request_limit(user_token.request_limit, user_token.request_usage)
@@ -84,14 +91,17 @@ async def embeddings_process(data: EmbeddingRequestDTO, db: Session):
 
     headers = {
         "Content-Type": "application/json",
-        "Authorization": f"Bearer {user_token.openai_token}"
+        "Authorization": f"Bearer {user_token.openai_token}",
     }
     payload = data.dict()
     payload.pop("api_key")
 
     async with aiohttp.ClientSession() as session:
-        async with session.post(BASE_URL + ENDPOINTS["embeddings"], json=jsonable_encoder(data),
-                                headers=headers) as response:
+        async with session.post(
+            BASE_URL + ENDPOINTS["embeddings"],
+            json=jsonable_encoder(data),
+            headers=headers,
+        ) as response:
             if response.status == 200:
                 result = await response.json()
                 update_user_token_after_request(user_token.id, 1, result["usage"]["total_tokens"], db)

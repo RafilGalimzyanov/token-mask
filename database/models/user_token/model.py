@@ -6,7 +6,7 @@ from database.core import Base
 
 
 class UserTokenORM(Base):
-    __tablename__ = 'user_token'
+    __tablename__ = "user_token"
 
     id = Column(Integer, primary_key=True)
     value = Column(String(60))
@@ -19,4 +19,4 @@ class UserTokenORM(Base):
     tokens_usage = Column(Integer, default=0)
     data_created = Column(DateTime, default=datetime.utcnow)
 
-    models = relationship('ModelORM', secondary='user_token_model')
+    models = relationship("ModelORM", secondary="user_token_model")

@@ -11,7 +11,7 @@ from service.models import ErrorMessage
 def generate_token(length=51):
     prefix = "ust-"
     charset = string.ascii_letters + string.digits
-    random_part = ''.join(secrets.choice(charset) for _ in range(length - len(prefix)))
+    random_part = "".join(secrets.choice(charset) for _ in range(length - len(prefix)))
     return prefix + random_part
 
 

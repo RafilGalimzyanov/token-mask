@@ -21,9 +21,8 @@ class UserTokenAddDTO(BaseModel):
 
 
 class UserTokenUpdateDTO(BaseModel):
-
     class Config:
-        extra = 'allow'
+        extra = "allow"
 
 
 class UserTokenDTO(UserTokenAddDTO):
@@ -65,7 +64,7 @@ class EmbeddingRequestDTO(BaseModel):
     encoding_format: Optional[str] = "float"
 
     class Config:
-        extra = 'allow'
+        extra = "allow"
 
 
 class ChatCompletionRequestDTO(BaseModel):
@@ -74,7 +73,7 @@ class ChatCompletionRequestDTO(BaseModel):
     messages: list[dict]
 
     class Config:
-        extra = 'allow'
+        extra = "allow"
 
 
 class ErrorMessage(BaseModel):
