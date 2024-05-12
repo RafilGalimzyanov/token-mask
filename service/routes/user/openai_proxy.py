@@ -46,8 +46,8 @@ def handle_openai_exception(func):
 
 
 @handle_openai_exception
-async def chat_completions(data: ChatCompletionRequestDTO, db: Session):
-    user_token = get_user_token_by_value(db, data.api_key)
+async def chat_completions(data: ChatCompletionRequestDTO, api_key: str, db: Session):
+    user_token = get_user_token_by_value(db, api_key)
 
     models_available = [model.name for model in user_token.models]
 
@@ -61,11 +61,9 @@ async def chat_completions(data: ChatCompletionRequestDTO, db: Session):
         "Content-Type": "application/json",
         "Authorization": f"Bearer {user_token.openai_token}",
     }
-    payload = data.dict()
-    payload.pop("api_key")
 
     async with aiohttp.ClientSession() as session:
-        async with session.post(BASE_URL + ENDPOINTS["chat_completions"], json=payload, headers=headers) as response:
+        async with session.post(BASE_URL + ENDPOINTS["chat_completions"], json=data.dict(), headers=headers) as response:
             if response.status == 200:
                 result = await response.json()
                 update_user_token_after_request(user_token.id, 1, result["usage"]["total_tokens"], db)
@@ -75,8 +73,8 @@ async def chat_completions(data: ChatCompletionRequestDTO, db: Session):
 
 
 @handle_openai_exception
-async def embeddings_process(data: EmbeddingRequestDTO, db: Session):
-    user_token = get_user_token_by_value(db, data.api_key)
+async def embeddings_process(data: EmbeddingRequestDTO, api_key: str, db: Session):
+    user_token = get_user_token_by_value(db, api_key)
 
     models_available = [model.name for model in user_token.models]
 
@@ -93,8 +91,6 @@ async def embeddings_process(data: EmbeddingRequestDTO, db: Session):
         "Content-Type": "application/json",
         "Authorization": f"Bearer {user_token.openai_token}",
     }
-    payload = data.dict()
-    payload.pop("api_key")
 
     async with aiohttp.ClientSession() as session:
         async with session.post(

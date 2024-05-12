@@ -58,7 +58,6 @@ class UserDTO(BaseModel):
 
 
 class EmbeddingRequestDTO(BaseModel):
-    api_key: str
     input: list
     model: str
     encoding_format: Optional[str] = "float"
@@ -68,7 +67,6 @@ class EmbeddingRequestDTO(BaseModel):
 
 
 class ChatCompletionRequestDTO(BaseModel):
-    api_key: str
     model: str
     messages: list[dict]
 

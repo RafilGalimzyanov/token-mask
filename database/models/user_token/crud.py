@@ -149,6 +149,7 @@ def delete_user_token(session: Session, user_token_id: int):
 @handle_database_exception
 def check_user(user_token: str, session: Session) -> UserDTO:
     user_token_db = session.query(UserTokenORM).filter(UserTokenORM.value == user_token).first()
+
     if not user_token_db:
         raise ValueError(f"Token '{user_token}' not found in the database!")
 
