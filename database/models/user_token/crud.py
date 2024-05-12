@@ -66,7 +66,7 @@ def get_user_token_safety(session: Session, token: str):
             "request_limit": query.request_limit,
             "request_usage": query.request_usage,
             "tiktoken_limit": query.tiktoken_limit,
-            "tokens_used": query.tokens_used,
+            "tokens_usage": query.tokens_usage,
             "models": query.models,
             "data_created": query.data_created,
         }
